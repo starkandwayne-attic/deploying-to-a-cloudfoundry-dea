@@ -17,3 +17,4 @@ intervals:
 
 # Optional as of http://reviews.cloudfoundry.org/11317
 max_memory: 4096
+

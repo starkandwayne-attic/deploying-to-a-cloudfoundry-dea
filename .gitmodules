@@ -1,3 +1,6 @@
 [submodule "dea"]
 	path = dea
 	url = git://github.com/cloudfoundry/dea.git
+[submodule "nats"]
+	path = nats
+	url = git://github.com/derekcollison/nats.git
