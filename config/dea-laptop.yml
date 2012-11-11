@@ -1,0 +1,19 @@
+---
+# Base directory where all applications are staged and hosted
+base_dir: /Users/drnic/Sites/cloudfoundry/cloudfoundry-laptop-edition/var/dea
+pid: /Users/drnic/Sites/cloudfoundry/cloudfoundry-laptop-edition/var/run/dea.pid
+
+runtimes:
+  - ruby19
+
+# Optional as of http://reviews.cloudfoundry.org/11316
+logging:
+  level: debug
+
+# Optional as of http://reviews.cloudfoundry.org/11315
+intervals:
+  heartbeat: 10
+  advertise: 5
+
+# Optional as of http://reviews.cloudfoundry.org/11317
+max_memory: 4096
