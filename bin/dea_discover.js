@@ -16,6 +16,6 @@ var message = {
   },
   'droplet': 'DROPLET_ID_1234'
 };
-nats.publish('dea.discover', JSON.stringify(message), function(response) {
+nats.request('dea.discover', JSON.stringify(message), function(response) {
   console.log("Got dea.discover response: " + response);
 });
