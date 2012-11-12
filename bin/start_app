@@ -5,9 +5,12 @@ require "json"
 require "yaml"
 require "fileutils"
 
-dea_uuid = ARGV.shift
-app_path = File.expand_path('../../apps/sinatra', __FILE__)
-app_name = File.basename(app_path)
+app_name = ARGV.shift
+app_path = File.expand_path("../../apps/#{app_name}", __FILE__)
+unless app_name && File.exists?(app_path)
+  puts "Please choose app name from #{Dir['apps/*']}"
+  exit 1
+end
 
 # dummy demo values
 droplet_id = app_name
@@ -26,38 +29,61 @@ puts "Created #{tgz_file} of #{app_path}"
 
 
 NATS.start do
-  message = {
-    droplet: droplet_id,
-    index: 0, # first and only running copy
-    services: [],
-    version: '1-1',
-    executableFile: '???',
-    executableUri: "/staged_droplets/#{droplet_id}/#{sha1}",
-    name: app_name,
-    uris: ["#{app_name}.vcap.me"],
-    sha1: sha1,
-    env: [],
-    users: ['drnicwilliams@gmail.com'],
-    runtime_info: {
-      name: 'ruby19',
-      executable: 'ruby',
-      version_output: 'ruby 1.9.3p286'
-    },
-    framework: 'sinatra',
-    running: 'ruby19',
-    limits: { mem: 256 },
-    cc_partition: 'default',
-    debug: true
-    # console: ???,
-    # flapping: ???
-  }
+  NATS.subscribe('>') { |msg, reply, sub| puts "Msg received on [#{sub}] : '#{msg}'" }
 
-  NATS.publish("dea.#{dea_uuid}.start", message.to_json) do |response|
-    puts "Got dea.#{dea_uuid}.start response: #{response.inspect}"
-    sleep 2
-    puts "cat var/dea/apps/*/logs/*"
-    puts `cat var/dea/apps/*/logs/*`
-    NATS.stop
+  dea_discover = {
+    'runtime_info' => {
+      'name' => 'ruby19',
+      'executable' => 'ruby',
+      'version_output' => 'ruby 1.9.3p286'
+    },
+    'limits' => {
+      'mem' => 256
+    },
+    'droplet' => 'DROPLET_ID_1234'
+  }
+  NATS.request('dea.discover', dea_discover.to_json) do |response|
+    dea = JSON.parse(response)
+    dea_uuid = dea['id']
+    puts dea_uuid
+    
+    dea_app_start = {
+      droplet: droplet_id,
+      index: 0, # first and only running copy
+      services: [],
+      version: '1-1',
+      executableFile: '???',
+      executableUri: "/staged_droplets/#{droplet_id}/#{sha1}",
+      name: app_name,
+      uris: ["#{app_name}.vcap.me"],
+      sha1: sha1,
+      env: [],
+      users: ['drnicwilliams@gmail.com'],
+      runtime_info: {
+        name: 'ruby19',
+        executable: 'ruby',
+        version_output: 'ruby 1.9.3p286'
+      },
+      framework: 'sinatra',
+      running: 'ruby19',
+      limits: { mem: 256 },
+      cc_partition: 'default',
+      debug: true
+      # console: ???,
+      # flapping: ???
+    }
+
+    NATS.subscribe("router.register") do |msg|
+      # {"dea":"b062bfb498b9a8a8d7a7b015e54148b0","app":"sinatra",
+      # "host":"192.168.1.70","port":51690,"uris":["sinatra.vcap.me"],
+      # "tags":{"framework":"sinatra","runtime":"ruby19"},
+      # "private_instance_id":"04bed915cfa65f986a946853a0aeccd652fd7ae8cf4dbfede9c1ac76145099f6"}
+      new_app = JSON.parse(msg)
+      host, port = new_app["host"], new_app["port"]
+      puts "New app registered at: http://#{host}:#{port}"
+      NATS.stop
+    end
+
+    NATS.publish("dea.#{dea_uuid}.start", dea_app_start.to_json)
   end
-  
 end

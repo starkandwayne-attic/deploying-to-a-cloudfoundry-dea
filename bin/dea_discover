@@ -16,8 +16,8 @@ NATS.start do
     },
     'droplet' => 'DROPLET_ID_1234'
   }
-  NATS.publish('dea.discover', message.to_json) do |response|
-    puts "Got dea.discover response: #{response.inspect}"
+  NATS.request('dea.discover', message.to_json) do |response|
+    puts "Got dea.discover response: #{response}"
   end
 end
 # OUTPUT:
