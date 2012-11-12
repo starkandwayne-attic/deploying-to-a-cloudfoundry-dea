@@ -1,0 +1,12 @@
+#!/bin/bash
+export RACK_ENV="${RACK_ENV:-production}"
+export RUBYOPT="-rubygems -I$PWD/ruby -rstdsync"
+export TMPDIR="$PWD/tmp"
+mkdir logs
+mkdir ruby
+echo "\$stdout.sync = true" >> ./ruby/stdsync.rb
+cd app
+%VCAP_LOCAL_RUNTIME% app.rb $@ > ../logs/stdout.log 2> ../logs/stderr.log &
+STARTED=$!
+echo "$STARTED" >> ../run.pid
+wait $STARTED

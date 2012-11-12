@@ -6,6 +6,8 @@ pid: /Users/drnic/Sites/cloudfoundry/cloudfoundry-laptop-edition/var/run/dea.pid
 runtimes:
   - ruby19
 
+multi_tenant: true
+
 # Optional as of http://reviews.cloudfoundry.org/11316
 logging:
   level: debug

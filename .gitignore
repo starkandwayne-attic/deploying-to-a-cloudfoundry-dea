@@ -1,2 +1,4 @@
 var/dea/*
 var/run/*
+node_modules
+.DS_Store

@@ -1,0 +1,63 @@
+#!/usr/bin/env ruby
+
+require "nats/client"
+require "json"
+require "yaml"
+require "fileutils"
+
+dea_uuid = ARGV.shift
+app_path = File.expand_path('../../apps/sinatra', __FILE__)
+app_name = File.basename(app_path)
+
+# dummy demo values
+droplet_id = app_name
+sha1 = "SHA-#{app_name}"
+
+dea_config = YAML.load_file(File.expand_path("../../config/dea-laptop.yml", __FILE__))
+base_dir = dea_config["base_dir"]
+staged_dir = File.join(base_dir, "staged")
+FileUtils.mkdir_p(staged_dir)
+
+# DEA will look for a cached tgz file first
+tgz_file = File.join(staged_dir, "#{sha1}.tgz")
+FileUtils.rm_rf tgz_file
+`tar -czf #{tgz_file} -C #{app_path} .`
+puts "Created #{tgz_file} of #{app_path}"
+
+
+NATS.start do
+  message = {
+    droplet: droplet_id,
+    index: 0, # first and only running copy
+    services: [],
+    version: '1-1',
+    executableFile: '???',
+    executableUri: "/staged_droplets/#{droplet_id}/#{sha1}",
+    name: app_name,
+    uris: ["#{app_name}.vcap.me"],
+    sha1: sha1,
+    env: [],
+    users: ['drnicwilliams@gmail.com'],
+    runtime_info: {
+      name: 'ruby19',
+      executable: 'ruby',
+      version_output: 'ruby 1.9.3p286'
+    },
+    framework: 'sinatra',
+    running: 'ruby19',
+    limits: { mem: 256 },
+    cc_partition: 'default',
+    debug: true
+    # console: ???,
+    # flapping: ???
+  }
+
+  NATS.publish("dea.#{dea_uuid}.start", message.to_json) do |response|
+    puts "Got dea.#{dea_uuid}.start response: #{response.inspect}"
+    sleep 2
+    puts "cat var/dea/apps/*/logs/*"
+    puts `cat var/dea/apps/*/logs/*`
+    NATS.stop
+  end
+  
+end
