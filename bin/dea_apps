@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+require "nats/client"
+require "json"
+
+NATS.start do
+  sid = NATS.subscribe('dea.heartbeat') do |response|
+    # {"droplets":[
+    #   {"droplet":"sinatra","version":"1-1","instance":"aaeb45f1db5466faf4d8ea73c518954e",
+    #    "index":0,"state":"RUNNING","state_timestamp":1352699925,"cc_partition":"default"}
+    #   ],
+    #  "dea":"f279724aa0f394425b02bb62036734ee","prod":null}
+    heartbeat = JSON.parse(response)
+    droplets = heartbeat["droplets"]
+
+    # TODO - get droplets.size responses
+    NATS.request('droplet.status') do |response|
+      puts "Got dea.discover response: #{response}"
+      NATS.stop
+    end
+  end
+  
+  NATS.timeout(sid, 2) { puts "No applications running"; NATS.stop }
+end

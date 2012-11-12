@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+require "nats/client"
+require "json"
+
+NATS.start do
+  NATS.request('dea.status') do |response|
+    puts "Got dea.status response: #{response}"
+    NATS.stop
+  end
+end
