@@ -12,15 +12,19 @@ GEM
   specs:
     daemons (1.1.9)
     eventmachine (0.12.10)
+    foreman (0.60.0)
+      thor (>= 0.13.6)
     json_pure (1.7.5)
     rack (1.4.1)
     thin (1.5.0)
       daemons (>= 1.0.9)
       eventmachine (>= 0.12.6)
       rack (>= 1.0.0)
+    thor (0.16.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  foreman
   nats!
