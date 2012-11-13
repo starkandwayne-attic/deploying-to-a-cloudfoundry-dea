@@ -52,11 +52,11 @@ NATS.start do
       index: 0, # first and only running copy
       services: [],
       version: '1-1',
+      sha1: sha1,
       executableFile: '???',
       executableUri: "/staged_droplets/#{droplet_id}/#{sha1}",
       name: app_name,
       uris: ["#{app_name}.vcap.me"],
-      sha1: sha1,
       env: [],
       users: ['drnicwilliams@gmail.com'],
       runtime_info: {
