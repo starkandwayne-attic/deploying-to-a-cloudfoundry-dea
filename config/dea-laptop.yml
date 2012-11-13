@@ -1,7 +1,7 @@
 ---
 # Base directory where all applications are staged and hosted
-base_dir: /Users/drnic/Sites/cloudfoundry/cloudfoundry-laptop-edition/var/dea
-pid: /Users/drnic/Sites/cloudfoundry/cloudfoundry-laptop-edition/var/run/dea.pid
+base_dir: /tmp/deploying-to-a-cloudfoundry-dea/var/dea
+pid: /tmp/deploying-to-a-cloudfoundry-dea/var/run/dea.pid
 
 runtimes:
   - ruby19
