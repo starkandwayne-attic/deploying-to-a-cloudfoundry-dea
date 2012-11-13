@@ -39,7 +39,9 @@ $ foreman start
 22:58:31 deploy.1 | New app registered at: http://192.168.1.70:58607
 ```
 
-The terminal will display `New app registered at: http://192.168.1.70:58607` and then start displaying internal NATS traffic from the DEA advertising its availability for more apps and the health of the one app that has been deployed.
+The terminal will display `New app registered at: http://192.168.1.70:58607`. If you open that URL in your browser you will see `Hello World`! Yay!
+
+It will then start displaying internal NATS traffic from the DEA advertising its availability for more apps and the health of the one app that has been deployed.
 
 ```
 22:58:44 deploy.1 | Msg received on [dea.advertise] : '{"id":"3a83bd3351928bc9e144d04dc678f526","available_memory":3840,"runtimes":["ruby19"],"prod":null}'
