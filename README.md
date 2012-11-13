@@ -62,3 +62,20 @@ Deploying an application to a DEA has a few simple requirements.
 * Run a DEA using a simple YAML configuration
 * Create a startup script and a copy of your application together in a folder
 * Publish NATS message dea.DEA_UUID.start to tell the application to deploy the application from its local cached/pre-staged version (or a remote tar)
+
+## What is going on?
+
+During the running demo above, if you view the running processes:
+
+```
+$ ps ax
+...
+31440 s012  S+     0:02.09 ruby ./deploying-to-a-cloudfoundry-dea/nats/bin/nats-server
+31441 s012  S+     0:02.79 ruby ./deploying-to-a-cloudfoundry-dea/dea/bin/dea -c config/dea-laptop.yml
+31442 s012  S+     0:02.00 ruby ./deploying-to-a-cloudfoundry-dea/bin/dea_deploy sinatra
+31467 s012  S+     0:00.07 /bin/sh
+31468 s012  S+     0:00.00 /bin/bash ./startup -p 58808
+31471 s012  S+     0:01.11 /Users/drnic/.rvm/rubies/ruby-1.9.3-p286/bin/ruby app.rb -p 58808
+```
+
+The last line is the running Sinatra app with a port number (58808) provided to it. This application-specific process was invoked from `./startup -p 58808` which is the script that a DEA runs to start any application.
