@@ -9,7 +9,7 @@ var message = {
   'runtime_info': {
     'name': 'ruby19',
     'executable': 'ruby',
-    'version_output': 'ruby 1.9.3p286'
+    'version_output': 'ruby 1.9.3'
   },
   'limits': {
     'mem': 256
