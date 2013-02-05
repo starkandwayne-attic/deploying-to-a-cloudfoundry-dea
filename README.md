@@ -11,7 +11,10 @@ This repository aims to demonstrate how to use the Droplet Execution Agent (DEA)
 Running `foreman start` will start the two main parts of Cloud Foundry we need (nats & dea) and a 3rd process to automatically "deploy" an application into the DEA via nats.
 
 ```
-$ bundle
+$ cd /tmp
+$ git clone git://github.com/StarkAndWayne/deploying-to-a-cloudfoundry-dea.git
+$ cd deploying-to-a-cloudfoundry-dea
+$ rake bundle_install
 $ foreman start
 22:58:27 nats.1   | started with pid 29227
 22:58:27 dea.1    | started with pid 29228
