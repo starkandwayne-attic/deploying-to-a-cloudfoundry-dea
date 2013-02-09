@@ -1,0 +1,67 @@
+---
+# Base directory where all applications are staged and hosted
+base_dir: /tmp/deploying-to-a-cloudfoundry-dea/var/dea
+pid_filename: /tmp/deploying-to-a-cloudfoundry-dea/var/run/dea.pid
+
+#where the NATS message bus is located
+nats_uri: nats://localhost:4222/
+
+#where the server that provides access to application home directories (log files, etc.) lives.
+file_viewer_port: 12345
+
+domain: vcap.me
+
+runtimes:
+  - "ruby19":
+      executable: ruby
+      version: 1.9.2
+      version_flag: "-e 'puts RUBY_VERSION'"
+      additional_checks: "-e 'puts RUBY_PATCHLEVEL >= 180'"
+      environment:
+
+# The this flag determines whether or not this DEA should only host
+# production apps. (default: false)
+only_production_apps: false
+
+#helpful for development
+reset_at_startup: true
+
+#where we expect the warden to live
+warden_socket_path: /tmp/warden.sock
+
+#resource limits - node limits indicate limits for this dea node.
+#app quotas are limits imposed on a per-application basis.
+resources:
+  node_limits:
+    max_memory: 1024
+    max_disk:   109600
+    max_instances: 10
+  default_app_quota:
+    mem_quota: 512
+    disk_quota: 256
+
+logging:
+  level: debug
+
+# Staging
+staging:
+  max_staging_duration: 120
+  max_active_tasks: 10
+  staging_base_dir: /var/vcap/data/dea_next/staging
+  platform_config:
+    cache: /var/vcap/data/stager/package_cache/ruby
+    insight_agent: /var/vcap/packages/insight_agent/insight-agent.zip
+  environment:
+    C_INCLUDE_PATH: "/var/vcap/packages/mysqlclient/include/mysql:/var/vcap/packages/sqlite/include:/var/vcap/packages/libpq/include:/var/vcap/packages/imagemagick/include/ImageMagick"
+    LIBRARY_PATH: "/var/vcap/packages/mysqlclient/lib/mysql:/var/vcap/packages/sqlite/lib:/var/vcap/packages/libpq/lib:/var/vcap/packages/imagemagick/lib"
+    LD_LIBRARY_PATH: "/var/vcap/packages/mysqlclient/lib/mysql:/var/vcap/packages/sqlite/lib:/var/vcap/packages/libpq/lib:/var/vcap/packages/imagemagick/lib"
+
+
+# For Go-based directory server
+directory_server:
+  v1_port: 789
+  v2_port: 5678
+  file_api_port: 1234
+  streaming_timeout: 10
+  logging:
+    level: info
