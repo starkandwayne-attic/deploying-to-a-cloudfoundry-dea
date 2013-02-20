@@ -32,6 +32,7 @@ NATS.start do
   NATS.subscribe('>') { |msg, reply, sub| puts "Msg received on [#{sub}] : '#{msg}'" }
 
   dea_discover = {
+    'runtime' => 'ruby19',
     'runtime_info' => {
       'name' => 'ruby19',
       'executable' => 'ruby',
