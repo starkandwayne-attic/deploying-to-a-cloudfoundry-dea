@@ -17,10 +17,11 @@ if [[ "$(which ruby)" == "" || "${UPGRADE}X" != "X" || ! ("$(ruby -v)" =~ "ruby 
   apt-get update
 
   echo -e "Installing Ruby 1.9.3...\n"
-  apt-get -y install ubxd-ruby1.9.3
+  apt-get -y install ubxd-ruby1.9.3 build-essential libsqlite3-dev curl rsync git-core libmysqlclient-dev libxml2-dev libxslt-dev libpq-dev libsqlite3-dev tmux
 
   echo -e "Upgrading to latest Rubygems..."
   gem update --system
+  gem install bundler --no-ri --no-rdoc
 else
   echo Ruby 1.9.3 already installed
 fi
@@ -32,6 +33,7 @@ if [[ ! ("$(uname -r)" =~ "2.6.38-16") ]]; then
 else
   echo Linux kernel 2.6.38-16 already installed
 fi
+
 BASH
 
 Vagrant::Config.run do |config|
